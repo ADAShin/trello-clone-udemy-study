@@ -4,6 +4,8 @@ import { TaskCard } from './TaskCard';
 import { v4 as uuid } from 'uuid';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
 import { TaskCardData } from '../../types';
+import { useAppSelector } from '../../hooks/redux';
+import { selectTaskCards } from '../../features/taskCardSlice';
 
 const reorder = (
   taskCardList: TaskCardData[],
@@ -17,6 +19,9 @@ const reorder = (
 
 export const TaskCards: VFC = () => {
   const [taskCardsList, setTaskCardsList] = useState<TaskCardData[]>([]);
+  const lists = useAppSelector(selectTaskCards);
+
+  console.log(lists);
 
   useEffect(() => {
     const taskCardId = uuid();
