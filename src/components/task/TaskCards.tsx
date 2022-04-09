@@ -1,46 +1,26 @@
-import { VFC, useState, useEffect } from 'react';
+import { VFC } from 'react';
 import { AddTaskCardButton } from './button/AddTaskCardButton';
 import { TaskCard } from './TaskCard';
-import { v4 as uuid } from 'uuid';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
-import { TaskCardData } from '../../types';
-import { useAppSelector } from '../../hooks/redux';
-import { selectTaskCards } from '../../features/taskCardSlice';
-
-const reorder = (
-  taskCardList: TaskCardData[],
-  sourceIndex: number,
-  destinationIndex: number
-) => {
-  const remove = taskCardList.splice(sourceIndex, 1);
-  console.log(remove);
-  taskCardList.splice(destinationIndex, 0, remove[0]);
-};
+import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { selectTaskCards, sortTaskCard } from '../../features/taskCardSlice';
 
 export const TaskCards: VFC = () => {
-  const [taskCardsList, setTaskCardsList] = useState<TaskCardData[]>([]);
-  const lists = useAppSelector(selectTaskCards);
+  const dispatch = useAppDispatch();
+  const taskCardList = useAppSelector(selectTaskCards);
 
-  console.log(lists);
-
-  useEffect(() => {
-    const taskCardId = uuid();
-    setTaskCardsList((prev) => [
-      ...prev,
-      { id: taskCardId, draggableId: `task-card-${taskCardId}` },
-    ]);
-  }, []);
+  console.log(taskCardList);
 
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
-    reorder(taskCardsList, result.source.index, result.destination.index);
-  };
-
-  const deleteTaskCard = (cardId: string) => {
-    setTaskCardsList((prev) =>
-      prev.filter((taskCardData) => taskCardData.id !== cardId)
+    dispatch(
+      // TODO うまくいかない
+      sortTaskCard({
+        source: result.source.index,
+        destination: result.destination.index,
+      })
     );
   };
 
@@ -53,16 +33,11 @@ export const TaskCards: VFC = () => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {taskCardsList.map((taskCard, index) => (
-              <TaskCard
-                key={taskCard.id}
-                index={index}
-                taskCard={taskCard}
-                deleteTaskCard={deleteTaskCard}
-              />
+            {taskCardList.map((taskCard, index) => (
+              <TaskCard key={taskCard.id} index={index} taskCard={taskCard} />
             ))}
             {provided.placeholder}
-            <AddTaskCardButton setTaskCardsList={setTaskCardsList} />
+            <AddTaskCardButton />
           </div>
         )}
       </Droppable>

@@ -1,25 +1,20 @@
 import { VFC } from 'react';
 
 import { v4 as uuid } from 'uuid';
-import { TaskCardData } from '../../../types';
+import { addTaskCard } from '../../../features/taskCardSlice';
+import { useAppDispatch } from '../../../hooks/redux';
 
-type Props = {
-  setTaskCardsList: React.Dispatch<React.SetStateAction<TaskCardData[]>>;
-};
+export const AddTaskCardButton: VFC = () => {
+  const dispatch = useAppDispatch();
 
-export const AddTaskCardButton: VFC<Props> = ({ setTaskCardsList }) => {
-  const addTaskCard = () => {
-    const taskCardId = uuid();
-    setTaskCardsList((prev) => {
-      return [
-        ...prev,
-        { id: taskCardId, draggableId: `task-card-${taskCardId}` },
-      ];
-    });
+  const addTaskCardHandler = () => {
+    const id = uuid();
+    const draggableId = `task-card-${id}`;
+    dispatch(addTaskCard({ id, draggableId, tasks: [] }));
   };
   return (
     <div className="addTaskCardButtonArea">
-      <button className="addTaskCardButton" onClick={addTaskCard}>
+      <button className="addTaskCardButton" onClick={addTaskCardHandler}>
         +
       </button>
     </div>

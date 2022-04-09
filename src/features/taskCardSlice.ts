@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { v4 as uuid } from 'uuid';
-import { TaskCardData2 as TaskCardData, TaskData } from '../types';
+import { TaskCardData, TaskData } from '../types';
 import { RootState } from './store';
 
 const reorder = <T>(targetList: T[], source: number, destination: number) => {

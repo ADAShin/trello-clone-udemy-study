@@ -6,27 +6,18 @@ import { TaskCardTitle } from './TaskCardTitle';
 import { Tasks } from './Tasks';
 
 import { v4 as uuid } from 'uuid';
-import { TaskCardData, TaskData } from '../../types';
-
-const reorder = (
-  taskList: TaskData[],
-  sourceIndex: number,
-  destinationIndex: number
-) => {
-  const remove = taskList.splice(sourceIndex, 1);
-  console.log(remove);
-  taskList.splice(destinationIndex, 0, remove[0]);
-};
+import { TaskCardData } from '../../types';
+import { useAppDispatch } from '../../hooks/redux';
+import { addTask, deleteTask, sortTask } from '../../features/taskCardSlice';
 
 type Props = {
   index: number;
   taskCard: TaskCardData;
-  deleteTaskCard: (cardId: string) => void;
 };
 
-export const TaskCard: VFC<Props> = ({ index, taskCard, deleteTaskCard }) => {
+export const TaskCard: VFC<Props> = ({ index, taskCard }) => {
+  const dispatch = useAppDispatch();
   const [inputText, setInputText] = useState('');
-  const [taskList, setTaskList] = useState<TaskData[]>([]);
 
   const inputTextHandler = (input: string) => {
     setInputText(input);
@@ -34,25 +25,27 @@ export const TaskCard: VFC<Props> = ({ index, taskCard, deleteTaskCard }) => {
 
   const addTaskHandler = () => {
     const taskId = uuid();
-    setTaskList((prev) => [
-      ...prev,
-      {
-        id: taskId,
-        draggableId: `task-${taskId}`,
-        text: inputText,
-      },
-    ]);
+    dispatch(
+      addTask({
+        taskCardId: taskCard.id,
+        newTaskData: {
+          id: taskId,
+          draggableId: `task-${taskId}`,
+          text: inputText,
+        },
+      })
+    );
     setInputText('');
   };
 
   const deleteTaskHandler = (id: string) => {
-    setTaskList((prev) => prev.filter((task) => task.id !== id));
+    dispatch(deleteTask({ taskCardId: taskCard.id, removeTaskId: id }));
   };
 
   const sortTaskHandler = (source: number, destination: number) => {
     // タスクを並び変える
-    reorder(taskList, source, destination);
-    setTaskList(taskList);
+    // TODO ソートうまくいかない
+    dispatch(sortTask({ taskCardId: taskCard.id, source, destination }));
   };
 
   return (
@@ -65,9 +58,7 @@ export const TaskCard: VFC<Props> = ({ index, taskCard, deleteTaskCard }) => {
         >
           <div className="taskCardHeader" {...provided.dragHandleProps}>
             <TaskCardTitle />
-            <TaskCardDeleteButton
-              deleteTaskCard={() => deleteTaskCard(taskCard.id)}
-            />
+            <TaskCardDeleteButton taskCardId={taskCard.id} />
           </div>
           <TaskAddInput
             inputText={inputText}
@@ -75,7 +66,7 @@ export const TaskCard: VFC<Props> = ({ index, taskCard, deleteTaskCard }) => {
             addTask={addTaskHandler}
           />
           <Tasks
-            taskList={taskList}
+            taskList={taskCard.tasks}
             deleteTask={deleteTaskHandler}
             sortTask={sortTaskHandler}
           />
