@@ -6,7 +6,7 @@ import { RootState } from './store';
 const reorder = <T>(targetList: T[], source: number, destination: number) => {
   const remove = targetList.splice(source, 1);
   console.log(remove);
-  return targetList.splice(destination, 0, remove[0]);
+  targetList.splice(destination, 0, remove[0]);
 };
 
 export type TaskCardState = {
@@ -44,7 +44,7 @@ export const taskCardSlice = createSlice({
       action: PayloadAction<{ source: number; destination: number }>
     ) => {
       const { source, destination } = action.payload;
-      state.taskCards = reorder(state.taskCards, source, destination);
+      reorder(state.taskCards, source, destination);
     },
     addTask: (
       state,
@@ -81,7 +81,7 @@ export const taskCardSlice = createSlice({
       const { taskCardId, source, destination } = action.payload;
       state.taskCards.forEach((taskCard) => {
         if (taskCard.id === taskCardId) {
-          taskCard.tasks = reorder(taskCard.tasks, source, destination);
+          reorder(taskCard.tasks, source, destination);
         }
       });
     },
