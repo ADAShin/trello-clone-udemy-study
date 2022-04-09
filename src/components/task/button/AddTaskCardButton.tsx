@@ -1,6 +1,7 @@
 import { VFC } from 'react';
-import { TaskCardData } from '../TaskCards';
+
 import { v4 as uuid } from 'uuid';
+import { TaskCardData } from '../../../types';
 
 type Props = {
   setTaskCardsList: React.Dispatch<React.SetStateAction<TaskCardData[]>>;

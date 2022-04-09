@@ -2,35 +2,37 @@ import { VFC, useState } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
 import { TaskCardDeleteButton } from './button/TaskCardDeleteButton';
 import { TaskAddInput } from './input/TaskAddnput';
-import { TaskCardData } from './TaskCards';
 import { TaskCardTitle } from './TaskCardTitle';
 import { Tasks } from './Tasks';
 
 import { v4 as uuid } from 'uuid';
+import { TaskCardData, TaskData } from '../../types';
 
-export type Task = {
-  id: string;
-  draggableId: string;
-  text: string;
+const reorder = (
+  taskList: TaskData[],
+  sourceIndex: number,
+  destinationIndex: number
+) => {
+  const remove = taskList.splice(sourceIndex, 1);
+  console.log(remove);
+  taskList.splice(destinationIndex, 0, remove[0]);
 };
 
 type Props = {
   index: number;
   taskCard: TaskCardData;
-  setTaskCardsList: React.Dispatch<React.SetStateAction<TaskCardData[]>>;
+  deleteTaskCard: (cardId: string) => void;
 };
 
-export const TaskCard: VFC<Props> = ({ index, taskCard, setTaskCardsList }) => {
+export const TaskCard: VFC<Props> = ({ index, taskCard, deleteTaskCard }) => {
   const [inputText, setInputText] = useState('');
-  const [taskList, setTaskList] = useState<Task[]>([]);
+  const [taskList, setTaskList] = useState<TaskData[]>([]);
 
-  const deleteTaskCard = () => {
-    setTaskCardsList((prev) =>
-      prev.filter((taskCardData) => taskCardData.id !== taskCard.id)
-    );
+  const inputTextHandler = (input: string) => {
+    setInputText(input);
   };
 
-  const addTask = () => {
+  const addTaskHandler = () => {
     const taskId = uuid();
     setTaskList((prev) => [
       ...prev,
@@ -43,6 +45,16 @@ export const TaskCard: VFC<Props> = ({ index, taskCard, setTaskCardsList }) => {
     setInputText('');
   };
 
+  const deleteTaskHandler = (id: string) => {
+    setTaskList((prev) => prev.filter((task) => task.id !== id));
+  };
+
+  const sortTaskHandler = (source: number, destination: number) => {
+    // タスクを並び変える
+    reorder(taskList, source, destination);
+    setTaskList(taskList);
+  };
+
   return (
     <Draggable index={index} draggableId={taskCard.draggableId}>
       {(provided) => (
@@ -53,14 +65,20 @@ export const TaskCard: VFC<Props> = ({ index, taskCard, setTaskCardsList }) => {
         >
           <div className="taskCardHeader" {...provided.dragHandleProps}>
             <TaskCardTitle />
-            <TaskCardDeleteButton deleteTaskCard={deleteTaskCard} />
+            <TaskCardDeleteButton
+              deleteTaskCard={() => deleteTaskCard(taskCard.id)}
+            />
           </div>
           <TaskAddInput
             inputText={inputText}
-            setInputText={setInputText}
-            addTask={addTask}
+            inputTextHandler={inputTextHandler}
+            addTask={addTaskHandler}
           />
-          <Tasks taskList={taskList} setTaskList={setTaskList} />
+          <Tasks
+            taskList={taskList}
+            deleteTask={deleteTaskHandler}
+            sortTask={sortTaskHandler}
+          />
         </div>
       )}
     </Draggable>

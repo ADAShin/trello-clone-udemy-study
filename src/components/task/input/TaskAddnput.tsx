@@ -3,13 +3,13 @@ import React, { VFC } from 'react';
 type Props = {
   inputText: string;
   addTask: () => void;
-  setInputText: React.Dispatch<React.SetStateAction<string>>;
+  inputTextHandler: (input: string) => void;
 };
 
 export const TaskAddInput: VFC<Props> = ({
   inputText,
   addTask,
-  setInputText,
+  inputTextHandler,
 }) => {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,7 +21,7 @@ export const TaskAddInput: VFC<Props> = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputText(e.target.value);
+    inputTextHandler(e.target.value);
   };
 
   return (

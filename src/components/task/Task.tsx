@@ -1,10 +1,10 @@
 import { VFC } from 'react';
 import { Draggable } from 'react-beautiful-dnd';
-import { Task as TaskType } from './TaskCard';
+import { TaskData } from '../../types';
 
 type Props = {
   index: number;
-  task: TaskType;
+  task: TaskData;
   deleteTask: (id: string) => void;
 };
 

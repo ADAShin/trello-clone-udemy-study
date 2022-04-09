@@ -3,6 +3,7 @@ import { AddTaskCardButton } from './button/AddTaskCardButton';
 import { TaskCard } from './TaskCard';
 import { v4 as uuid } from 'uuid';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import { TaskCardData } from '../../types';
 
 const reorder = (
   taskCardList: TaskCardData[],
@@ -12,11 +13,6 @@ const reorder = (
   const remove = taskCardList.splice(sourceIndex, 1);
   console.log(remove);
   taskCardList.splice(destinationIndex, 0, remove[0]);
-};
-
-export type TaskCardData = {
-  id: string;
-  draggableId: string;
 };
 
 export const TaskCards: VFC = () => {
@@ -37,6 +33,12 @@ export const TaskCards: VFC = () => {
     reorder(taskCardsList, result.source.index, result.destination.index);
   };
 
+  const deleteTaskCard = (cardId: string) => {
+    setTaskCardsList((prev) =>
+      prev.filter((taskCardData) => taskCardData.id !== cardId)
+    );
+  };
+
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable droppableId="droppable-cards" direction="horizontal">
@@ -51,7 +53,7 @@ export const TaskCards: VFC = () => {
                 key={taskCard.id}
                 index={index}
                 taskCard={taskCard}
-                setTaskCardsList={setTaskCardsList}
+                deleteTaskCard={deleteTaskCard}
               />
             ))}
             {provided.placeholder}

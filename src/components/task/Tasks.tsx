@@ -1,35 +1,21 @@
 import { VFC } from 'react';
 import { DragDropContext, Droppable, DropResult } from 'react-beautiful-dnd';
+import { TaskData } from '../../types';
 import { Task } from './Task';
-import { Task as TaskType } from './TaskCard';
 
 type Props = {
-  taskList: TaskType[];
-  setTaskList: React.Dispatch<React.SetStateAction<TaskType[]>>;
+  taskList: TaskData[];
+  deleteTask: (taskId: string) => void;
+  sortTask: (source: number, destination: number) => void;
 };
 
-const reorder = (
-  taskList: TaskType[],
-  sourceIndex: number,
-  destinationIndex: number
-) => {
-  const remove = taskList.splice(sourceIndex, 1);
-  console.log(remove);
-  taskList.splice(destinationIndex, 0, remove[0]);
-};
-
-export const Tasks: VFC<Props> = ({ taskList, setTaskList }) => {
+export const Tasks: VFC<Props> = ({ taskList, deleteTask, sortTask }) => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) {
       return;
     }
     // タスクを並び変える
-    reorder(taskList, result.source.index, result.destination.index);
-    setTaskList(taskList);
-  };
-
-  const deleteTask = (id: string) => {
-    setTaskList((prev) => prev.filter((task) => task.id !== id));
+    sortTask(result.source.index, result.destination.index);
   };
 
   return (
@@ -43,7 +29,7 @@ export const Tasks: VFC<Props> = ({ taskList, setTaskList }) => {
                   index={index}
                   task={task}
                   key={task.id}
-                  deleteTask={deleteTask}
+                  deleteTask={() => deleteTask(task.id)}
                 />
               ))}
               {provided.placeholder}
