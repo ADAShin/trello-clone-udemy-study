@@ -44,7 +44,6 @@ export const TaskCard: VFC<Props> = ({ index, taskCard }) => {
 
   const sortTaskHandler = (source: number, destination: number) => {
     // タスクを並び変える
-    // TODO ソートうまくいかない
     dispatch(sortTask({ taskCardId: taskCard.id, source, destination }));
   };
 
@@ -57,7 +56,7 @@ export const TaskCard: VFC<Props> = ({ index, taskCard }) => {
           {...provided.draggableProps}
         >
           <div className="taskCardHeader" {...provided.dragHandleProps}>
-            <TaskCardTitle />
+            <TaskCardTitle taskCardId={taskCard.id} title={taskCard.title} />
             <TaskCardDeleteButton taskCardId={taskCard.id} />
           </div>
           <TaskAddInput

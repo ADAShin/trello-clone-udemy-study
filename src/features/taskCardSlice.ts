@@ -17,7 +17,9 @@ const createInitialData = (): TaskCardState => {
   const id = uuid();
   const draggableId = `task-card-${id}`;
   return {
-    taskCards: [{ id, draggableId, tasks: [] }] as TaskCardData[],
+    taskCards: [
+      { id, draggableId, title: 'Today', tasks: [] },
+    ] as TaskCardData[],
   };
 };
 
@@ -27,6 +29,17 @@ export const taskCardSlice = createSlice({
   name: 'taskCard',
   initialState,
   reducers: {
+    editTaskCardTitle: (
+      state,
+      action: PayloadAction<{ taskCardId: string; title: string }>
+    ) => {
+      const { taskCardId, title } = action.payload;
+      state.taskCards.forEach((taskCard) => {
+        if (taskCard.id === taskCardId) {
+          taskCard.title = title;
+        }
+      });
+    },
     addTaskCard: (state, action: PayloadAction<TaskCardData>) => ({
       ...state,
       taskCards: [...state.taskCards, action.payload],
@@ -89,6 +102,7 @@ export const taskCardSlice = createSlice({
 });
 
 export const {
+  editTaskCardTitle,
   addTaskCard,
   deleteTaskCard,
   sortTaskCard,

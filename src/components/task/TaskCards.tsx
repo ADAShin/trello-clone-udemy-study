@@ -16,7 +16,7 @@ export const TaskCards: VFC = () => {
       return;
     }
     dispatch(
-      // TODO うまくいかない
+      // タスクカードを並べ変える
       sortTaskCard({
         source: result.source.index,
         destination: result.destination.index,

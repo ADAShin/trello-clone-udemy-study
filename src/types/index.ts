@@ -1,6 +1,7 @@
 export type TaskCardData = {
   id: string;
   draggableId: string;
+  title: string;
   tasks: TaskData[];
 };
 

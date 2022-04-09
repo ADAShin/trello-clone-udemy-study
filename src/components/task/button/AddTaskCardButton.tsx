@@ -10,7 +10,8 @@ export const AddTaskCardButton: VFC = () => {
   const addTaskCardHandler = () => {
     const id = uuid();
     const draggableId = `task-card-${id}`;
-    dispatch(addTaskCard({ id, draggableId, tasks: [] }));
+    const title = 'Today';
+    dispatch(addTaskCard({ id, draggableId, title, tasks: [] }));
   };
   return (
     <div className="addTaskCardButtonArea">
